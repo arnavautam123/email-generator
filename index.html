@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MailCraft AI – Smart Email Generator | College B.Tech Project</title>
+  <meta name="description" content="AI-powered smart email generator for college students, teachers, job seekers, and professionals. Write high-quality emails in seconds in English, Hindi, and Hinglish." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#0f172a',
+              blue: '#1e40af',
+              purple: '#7c3aed',
+              indigo: '#4f46e5',
+              violet: '#8b5cf6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#home" onclick="app.navigate('home'); return false;" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-blue-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+          <i data-lucide="mail" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-800 dark:from-white dark:via-indigo-200 dark:to-purple-300 bg-clip-text text-transparent">MailCraft AI</span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 dark:bg-indigo-950/70 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">B.Tech</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Smart Email Generator</p>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-1">
+        <button onclick="app.navigate('home')" id="nav-home" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all flex items-center gap-1.5">
+          <i data-lucide="home" class="w-4 h-4"></i>
+          Home
+        </button>
+        <button onclick="app.navigate('generator')" id="nav-generator" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 transition-all flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          Email Generator
+        </button>
+        <button onclick="app.navigate('history')" id="nav-history" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all flex items-center gap-1.5 relative">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          History
+          <span id="history-badge" class="ml-1 text-[11px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">0</span>
+        </button>
+        <button onclick="app.navigate('about')" id="nav-about" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all flex items-center gap-1.5">
+          <i data-lucide="info" class="w-4 h-4"></i>
+          About
+        </button>
+      </nav>
+
+      <!-- Right Action Controls -->
+      <div class="flex items-center gap-2">
+        <!-- New Email Quick Button -->
+        <button onclick="app.newEmail()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all hover:scale-[1.02]">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          New Draft
+        </button>
+
+        <!-- API Settings Modal Button -->
+        <button onclick="app.openSettingsModal()" title="AI Engine Settings" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Dark Mode Toggle Button -->
+        <button onclick="app.toggleDarkMode()" id="theme-toggle" title="Toggle Theme" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <i data-lucide="moon" id="theme-icon-moon" class="w-4 h-4 hidden dark:block"></i>
+          <i data-lucide="sun" id="theme-icon-sun" class="w-4 h-4 block dark:hidden"></i>
+        </button>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button onclick="app.toggleMobileMenu()" class="p-2 md:hidden rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-1">
+      <button onclick="app.navigate('home')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i data-lucide="home" class="w-4 h-4"></i> Home
+      </button>
+      <button onclick="app.navigate('generator')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 flex items-center gap-2">
+        <i data-lucide="sparkles" class="w-4 h-4"></i> Email Generator
+      </button>
+      <button onclick="app.navigate('history')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between">
+        <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i> History</span>
+        <span id="mobile-history-badge" class="text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700">0</span>
+      </button>
+      <button onclick="app.navigate('about')" class="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i data-lucide="info" class="w-4 h-4"></i> About Project
+      </button>
+      <div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="app.newEmail()" class="w-full py-2 text-center text-sm font-semibold rounded-lg bg-indigo-600 text-white">
+          + New Email
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN APPLICATION CONTAINER ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ==================== VIEW 1: HOME / HERO ==================== -->
+    <section id="view-home" class="page-view space-y-12 py-4">
+      
+      <!-- Hero Header -->
+      <div class="text-center max-w-3xl mx-auto space-y-4 pt-4 sm:pt-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 shadow-sm">
+          <span class="ai-pulse-dot"></span>
+          <span>B.Tech CSE Capstone Project &bull; Version 2.0</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+          Write Better Emails <br class="hidden sm:inline" />
+          <span class="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">in Seconds.</span>
+        </h1>
+
+        <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
+          Your personal AI assistant for professional communication. Perfect for college students contacting professors, job seekers writing applications, and professionals crafting impact emails.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+          <button onclick="app.navigate('generator')" class="btn-primary px-6 py-3.5 text-base rounded-xl font-semibold flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+            Launch Email Generator
+          </button>
+          <button onclick="app.loadExample('college-assignment-extension'); app.navigate('generator');" class="btn-secondary px-5 py-3.5 text-base rounded-xl font-semibold flex items-center gap-2">
+            <i data-lucide="play" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+            Try Sample Prompt
+          </button>
+        </div>
+
+        <!-- Trust / Highlight Badges -->
+        <div class="pt-6 flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
+          <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> 10 Email Categories</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> 6 Nuanced Tones</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> English, Hindi & Hinglish</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Local & Offline Capable</span>
+        </div>
+      </div>
+
+      <!-- Live Feature Showcase Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+        <!-- Feature Card 1 -->
+        <div class="glass-card p-6 space-y-3 relative overflow-hidden">
+          <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xl border border-indigo-100 dark:border-indigo-900">
+            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Academic & Student Friendly</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">
+            Pre-configured templates and AI contexts for assignment extensions, medical leave, recommendation letters, and college lab submissions.
+          </p>
+          <div class="pt-2">
+            <button onclick="app.loadExample('college-assignment-extension'); app.navigate('generator');" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+              Try College Assignment Sample &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Feature Card 2 -->
+        <div class="glass-card p-6 space-y-3 relative overflow-hidden">
+          <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-xl border border-purple-100 dark:border-purple-900">
+            <i data-lucide="briefcase" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Job & Career Ready</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">
+            Tailor persuasive cold emails for developer internships, post-interview follow-ups, resume attachments, and recruiter outreach.
+          </p>
+          <div class="pt-2">
+            <button onclick="app.loadExample('job-application-internship'); app.navigate('generator');" class="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1">
+              Try Internship Application Sample &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Feature Card 3 -->
+        <div class="glass-card p-6 space-y-3 relative overflow-hidden">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xl border border-blue-100 dark:border-blue-900">
+            <i data-lucide="languages" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Trilingual Natural Language</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300">
+            Draft in flawless Global English, pure Hindi (मानक हिंदी), or conversational Hinglish. Adapts naturally to cultural and organizational etiquette.
+          </p>
+          <div class="pt-2">
+            <button onclick="app.loadExample('hinglish-friend-project'); app.navigate('generator');" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+              Try Hinglish Collab Sample &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick How It Works Section -->
+      <div class="glass-card p-6 sm:p-8 bg-gradient-to-br from-white via-indigo-50/20 to-purple-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/30">
+        <div class="max-w-2xl mx-auto text-center space-y-2 mb-8">
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">How MailCraft AI Works</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">Four straightforward steps from initial thought to a ready-to-send email.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="text-center space-y-2">
+            <div class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center mx-auto shadow-md">1</div>
+            <h4 class="font-semibold text-sm">Enter Purpose</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Jot down your main topic or pick one of our student & pro starter prompts.</p>
+          </div>
+
+          <div class="text-center space-y-2">
+            <div class="w-10 h-10 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center mx-auto shadow-md">2</div>
+            <h4 class="font-semibold text-sm">Pick Style & Recipient</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Select Professor, HR, or Client, and configure desired tone, type, and length.</p>
+          </div>
+
+          <div class="text-center space-y-2">
+            <div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center mx-auto shadow-md">3</div>
+            <h4 class="font-semibold text-sm">AI Synthesizes Draft</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Generates custom subject lines, appropriate greetings, body context, and sign-offs.</p>
+          </div>
+
+          <div class="text-center space-y-2">
+            <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center mx-auto shadow-md">4</div>
+            <h4 class="font-semibold text-sm">Edit, Copy & Send</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Edit directly in the preview card, 1-click copy to clipboard, or download as TXT.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: EMAIL GENERATOR (MAIN WORKSPACE) ==================== -->
+    <section id="view-generator" class="page-view active space-y-6">
+      
+      <!-- Workspace Top Banner / Quick Starter Prompts -->
+      <div class="glass-card p-4 bg-gradient-to-r from-indigo-50/70 via-white to-purple-50/70 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/40 border-indigo-100 dark:border-indigo-900/50">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs">
+              <i data-lucide="lightbulb" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Quick Starter Scenarios</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Click any scenario to auto-fill the generator for instant testing</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0" id="starter-pills-container">
+            <!-- Dynamically populated starter pills -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two-Column Card Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- LEFT COLUMN: INPUT FORM (7 Cols on LG) -->
+        <div class="lg:col-span-6 space-y-5">
+          <div class="glass-card p-5 sm:p-6 space-y-5 border-slate-200 dark:border-slate-800">
+            
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <i data-lucide="sliders" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+                <h2 class="text-base font-bold text-slate-900 dark:text-white">Email Parameters</h2>
+              </div>
+              <button onclick="app.resetForm()" title="Clear Form" class="text-xs text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 flex items-center gap-1 transition-colors">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                Reset
+              </button>
+            </div>
+
+            <!-- Field 1: Topic / Purpose -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label for="input-topic" class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <span>Purpose or Topic of Email</span>
+                  <span class="text-red-500">*</span>
+                </label>
+                <span id="topic-char-counter" class="text-[11px] text-slate-400">0 / 500</span>
+              </div>
+              <textarea 
+                id="input-topic" 
+                rows="3" 
+                maxlength="500"
+                placeholder="e.g., Requesting a 3-day extension on my Computer Networks lab submission due to viral fever..."
+                class="form-textarea text-sm"
+                oninput="app.updateCharCount(this.value)"
+              ></textarea>
+              <p class="text-[11px] text-slate-400 dark:text-slate-500">Provide key reasons, deadlines, dates, or specific requirements.</p>
+            </div>
+
+            <!-- Field 2: Recipient Selection -->
+            <div class="space-y-2">
+              <label class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                Recipient Role & Designation
+              </label>
+              
+              <!-- Recipient Role Chips -->
+              <div class="flex flex-wrap gap-1.5" id="recipient-chips">
+                <button type="button" onclick="app.setRecipientRole('Professor')" class="pill-option active" data-role="Professor">Professor / Faculty</button>
+                <button type="button" onclick="app.setRecipientRole('HR')" class="pill-option" data-role="HR">HR / Recruiter</button>
+                <button type="button" onclick="app.setRecipientRole('Manager')" class="pill-option" data-role="Manager">Manager / Team Lead</button>
+                <button type="button" onclick="app.setRecipientRole('Friend')" class="pill-option" data-role="Friend">Friend / Peer</button>
+                <button type="button" onclick="app.setRecipientRole('Client')" class="pill-option" data-role="Client">Client</button>
+                <button type="button" onclick="app.setRecipientRole('Other')" class="pill-option" data-role="Other">Other</button>
+              </div>
+
+              <!-- Custom Recipient Name / Title Input -->
+              <div class="pt-1">
+                <input 
+                  type="text" 
+                  id="input-custom-recipient" 
+                  placeholder="Recipient Name / Title (e.g. Dr. A. K. Sharma, Google Hiring Team, Rohan)"
+                  class="form-input text-xs"
+                />
+              </div>
+            </div>
+
+            <!-- Field 3: Email Type -->
+            <div class="space-y-1.5">
+              <label for="select-email-type" class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                Email Category / Type
+              </label>
+              <select id="select-email-type" class="form-select text-sm font-medium">
+                <option value="College Assignment" selected>College Assignment / Lab Extension</option>
+                <option value="Leave Request">Leave Request (Medical / Family / Duty)</option>
+                <option value="Job Application">Job Application / Internship Inquiry</option>
+                <option value="Follow-up">Follow-up (Interview / Application / Meeting)</option>
+                <option value="Formal">Formal Communication / Official Notice</option>
+                <option value="Informal">Informal / Casual Collab</option>
+                <option value="Professional">Professional Project Update</option>
+                <option value="Apology">Apology (Missed Deadline / Meeting)</option>
+                <option value="Thank You">Thank You / Letter of Appreciation</option>
+                <option value="Complaint">Complaint / Service Issue / Hostel Query</option>
+              </select>
+            </div>
+
+            <!-- Field 4: Desired Tone -->
+            <div class="space-y-2">
+              <label class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                Tone of Communication
+              </label>
+              <div class="grid grid-cols-3 gap-2" id="tone-options-grid">
+                <button type="button" onclick="app.setTone('Polite')" class="pill-option active justify-center" data-tone="Polite">
+                  <i data-lucide="smile" class="w-3.5 h-3.5"></i> Polite
+                </button>
+                <button type="button" onclick="app.setTone('Professional')" class="pill-option justify-center" data-tone="Professional">
+                  <i data-lucide="briefcase" class="w-3.5 h-3.5"></i> Professional
+                </button>
+                <button type="button" onclick="app.setTone('Urgent')" class="pill-option justify-center" data-tone="Urgent">
+                  <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Urgent
+                </button>
+                <button type="button" onclick="app.setTone('Friendly')" class="pill-option justify-center" data-tone="Friendly">
+                  <i data-lucide="heart" class="w-3.5 h-3.5"></i> Friendly
+                </button>
+                <button type="button" onclick="app.setTone('Persuasive')" class="pill-option justify-center" data-tone="Persuasive">
+                  <i data-lucide="zap" class="w-3.5 h-3.5"></i> Persuasive
+                </button>
+                <button type="button" onclick="app.setTone('Casual')" class="pill-option justify-center" data-tone="Casual">
+                  <i data-lucide="coffee" class="w-3.5 h-3.5"></i> Casual
+                </button>
+              </div>
+            </div>
+
+            <!-- Field 5 & 6: Language & Length (Split Row) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Language Selector -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Language
+                </label>
+                <div class="segmented-control" id="language-segmented">
+                  <button type="button" onclick="app.setLanguage('English')" class="segmented-btn active" data-lang="English">English</button>
+                  <button type="button" onclick="app.setLanguage('Hindi')" class="segmented-btn" data-lang="Hindi">हिंदी</button>
+                  <button type="button" onclick="app.setLanguage('Hinglish')" class="segmented-btn" data-lang="Hinglish">Hinglish</button>
+                </div>
+              </div>
+
+              <!-- Length Selector -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Length
+                </label>
+                <div class="segmented-control" id="length-segmented">
+                  <button type="button" onclick="app.setLength('Short')" class="segmented-btn" data-length="Short">Short</button>
+                  <button type="button" onclick="app.setLength('Medium')" class="segmented-btn active" data-length="Medium">Medium</button>
+                  <button type="button" onclick="app.setLength('Detailed')" class="segmented-btn" data-length="Detailed">Detailed</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Error Banner -->
+            <div id="form-error-banner" class="hidden p-3 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
+              <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
+              <span id="form-error-text">Please provide a topic or purpose for your email.</span>
+            </div>
+
+            <!-- Primary Generate & Helper Buttons -->
+            <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+              <button 
+                id="btn-generate-email" 
+                onclick="app.handleGenerate()" 
+                class="btn-primary flex-1 py-3 text-sm font-semibold rounded-xl"
+              >
+                <span id="btn-generate-content" class="flex items-center justify-center gap-2">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  <span>Generate Email</span>
+                </span>
+                <span id="btn-generate-spinner" class="hidden flex items-center justify-center gap-2">
+                  <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Synthesizing Email...</span>
+                </span>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="app.fillRandomSample()" 
+                class="btn-secondary px-3.5 py-3 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5"
+                title="Populate random realistic prompt"
+              >
+                <i data-lucide="dice-5" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+                <span>Random Sample</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: GENERATED EMAIL PREVIEW & EDITOR (6 Cols on LG) -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="glass-card p-5 sm:p-6 space-y-4 border-slate-200 dark:border-slate-800 relative min-h-[580px] flex flex-col justify-between">
+            
+            <!-- Output Header & Status Badges -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">Email Output</h3>
+                  <span id="output-engine-badge" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">MailCraft AI v2.0</span>
+                </div>
+
+                <!-- Type & Tone Tag Badges -->
+                <div class="flex items-center gap-1.5">
+                  <span id="output-badge-type" class="badge-tag badge-purple text-[10px]">Assignment</span>
+                  <span id="output-badge-tone" class="badge-tag badge-blue text-[10px]">Polite</span>
+                  <span id="output-badge-lang" class="badge-tag badge-green text-[10px]">English</span>
+                </div>
+              </div>
+
+              <!-- Subject Line Display & Copy -->
+              <div class="pt-4 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Subject Line</label>
+                  <button 
+                    onclick="app.copySubject()" 
+                    id="btn-copy-subject" 
+                    class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 flex items-center gap-1 transition-colors"
+                  >
+                    <i data-lucide="copy" class="w-3 h-3"></i>
+                    <span>Copy Subject</span>
+                  </button>
+                </div>
+                <div class="relative">
+                  <input 
+                    type="text" 
+                    id="output-subject" 
+                    placeholder="Your generated subject line will appear here..."
+                    class="form-input text-xs font-semibold bg-slate-50 dark:bg-slate-900/60 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 pr-10"
+                    oninput="app.handleOutputEdit()"
+                  />
+                </div>
+              </div>
+
+              <!-- Email Body Preview & Live ContentEditable Area -->
+              <div class="pt-3 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <span>Email Body (Editable)</span>
+                    <i data-lucide="edit-3" class="w-3 h-3 text-slate-400"></i>
+                  </label>
+                  <span class="text-[11px] text-slate-400">Click anywhere inside to customize</span>
+                </div>
+
+                <div class="relative border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/40 p-4 min-h-[300px]">
+                  
+                  <!-- Empty Placeholder State -->
+                  <div id="output-empty-state" class="py-12 flex flex-col items-center justify-center text-center space-y-3 text-slate-400 dark:text-slate-500">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center">
+                      <i data-lucide="wand-2" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1">
+                      <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Ready to draft your email</p>
+                      <p class="text-xs max-w-xs">Fill the parameters on the left or click any starter scenario to generate an email instantly.</p>
+                    </div>
+                  </div>
+
+                  <!-- Shimmering Loading Animation State -->
+                  <div id="output-loading-state" class="hidden py-8 space-y-4">
+                    <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">
+                      <i data-lucide="loader" class="w-4 h-4 animate-spin"></i>
+                      <span id="loading-step-text">Synthesizing tone and context...</span>
+                    </div>
+                    <div class="h-4 w-3/4 rounded loading-shimmer"></div>
+                    <div class="h-4 w-full rounded loading-shimmer"></div>
+                    <div class="h-4 w-5/6 rounded loading-shimmer"></div>
+                    <div class="h-4 w-2/3 rounded loading-shimmer"></div>
+                    <div class="h-4 w-1/2 rounded loading-shimmer"></div>
+                  </div>
+
+                  <!-- Actual Editable Text Area -->
+                  <div 
+                    id="output-body" 
+                    contenteditable="true" 
+                    class="email-content-editable text-sm text-slate-800 dark:text-slate-200 leading-relaxed hidden"
+                    oninput="app.handleOutputEdit()"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Output Footer: Word Counts & Actions -->
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+              <!-- Live Metrics -->
+              <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                <div class="flex items-center gap-3">
+                  <span>Words: <strong id="metric-word-count" class="text-slate-700 dark:text-slate-200 font-semibold">0</strong></span>
+                  <span>Characters: <strong id="metric-char-count" class="text-slate-700 dark:text-slate-200 font-semibold">0</strong></span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span id="metric-reading-time">~0 sec read</span>
+                </div>
+              </div>
+
+              <!-- Action Toolbar -->
+              <div class="flex flex-wrap items-center gap-2">
+                <button 
+                  onclick="app.copyEmailBody()" 
+                  id="btn-copy-body" 
+                  class="btn-primary text-xs py-2 px-3.5 rounded-lg font-semibold flex items-center gap-1.5 shadow-sm"
+                >
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>Copy Email</span>
+                </button>
+
+                <button 
+                  onclick="app.regenerate()" 
+                  id="btn-regenerate" 
+                  class="btn-secondary text-xs py-2 px-3 rounded-lg font-semibold flex items-center gap-1.5"
+                  title="Generate another alternative version"
+                >
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                  <span>Regenerate</span>
+                </button>
+
+                <button 
+                  onclick="app.downloadTxt()" 
+                  class="btn-secondary text-xs py-2 px-3 rounded-lg font-semibold flex items-center gap-1.5"
+                  title="Save as .txt file"
+                >
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download TXT</span>
+                </button>
+
+                <button 
+                  onclick="app.saveCurrentToHistory()" 
+                  id="btn-save-history" 
+                  class="btn-secondary text-xs py-2 px-3 rounded-lg font-semibold flex items-center gap-1.5 ml-auto"
+                  title="Bookmark to history page"
+                >
+                  <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+                  <span>Save</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 3: HISTORY & PERSISTENCE ==================== -->
+    <section id="view-history" class="page-view space-y-6">
+      
+      <!-- History Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 border-slate-200 dark:border-slate-800">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="history" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></i>
+            Generated Emails History
+          </h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300">
+            View, search, edit, copy, and export your previously generated emails stored persistently.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="mailCraftHistory.exportJSON()" class="btn-secondary text-xs py-2 px-3 rounded-lg font-semibold flex items-center gap-1.5">
+            <i data-lucide="file-json" class="w-3.5 h-3.5"></i> Export JSON
+          </button>
+          <button onclick="mailCraftHistory.exportCSV()" class="btn-secondary text-xs py-2 px-3 rounded-lg font-semibold flex items-center gap-1.5">
+            <i data-lucide="table" class="w-3.5 h-3.5"></i> Export CSV
+          </button>
+          <button onclick="app.clearAllHistoryConfirm()" class="btn-secondary text-xs py-2 px-3 rounded-lg font-semibold text-red-600 hover:text-red-700 dark:text-red-400 flex items-center gap-1.5">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear All
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Filters Toolbar -->
+      <div class="glass-card p-4 border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center gap-3">
+        <!-- Search Bar -->
+        <div class="relative flex-1 w-full">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+          <input 
+            type="text" 
+            id="history-search-input" 
+            placeholder="Search history by topic, recipient, subject, or content..."
+            class="form-input text-xs pl-9"
+            oninput="app.renderHistory()"
+          />
+        </div>
+
+        <!-- Filter Dropdowns -->
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <select id="history-filter-type" onchange="app.renderHistory()" class="form-select text-xs font-medium w-auto">
+            <option value="all">All Categories</option>
+            <option value="College Assignment">College Assignment</option>
+            <option value="Leave Request">Leave Request</option>
+            <option value="Job Application">Job Application</option>
+            <option value="Follow-up">Follow-up</option>
+            <option value="Formal">Formal</option>
+            <option value="Informal">Informal</option>
+            <option value="Apology">Apology</option>
+            <option value="Thank You">Thank You</option>
+            <option value="Complaint">Complaint</option>
+          </select>
+
+          <select id="history-filter-tone" onchange="app.renderHistory()" class="form-select text-xs font-medium w-auto">
+            <option value="all">All Tones</option>
+            <option value="Polite">Polite</option>
+            <option value="Professional">Professional</option>
+            <option value="Urgent">Urgent</option>
+            <option value="Friendly">Friendly</option>
+            <option value="Persuasive">Persuasive</option>
+            <option value="Casual">Casual</option>
+          </select>
+
+          <select id="history-filter-lang" onchange="app.renderHistory()" class="form-select text-xs font-medium w-auto">
+            <option value="all">All Languages</option>
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Hinglish">Hinglish</option>
+          </select>
+
+          <button 
+            type="button" 
+            id="history-filter-fav-btn" 
+            onclick="app.toggleHistoryFavoritesFilter()" 
+            class="pill-option text-xs font-medium"
+          >
+            <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>Favorites</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- History Items Container -->
+      <div id="history-items-container" class="space-y-3">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Empty History State -->
+      <div id="history-empty-state" class="hidden glass-card p-12 text-center space-y-4">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center mx-auto">
+          <i data-lucide="inbox" class="w-8 h-8"></i>
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">No Emails in History</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+            Your generated emails and drafts will appear here. Try generating your first email in the workspace!
+          </p>
+        </div>
+        <button onclick="app.navigate('generator')" class="btn-primary text-xs py-2 px-4 rounded-lg font-semibold inline-flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          Go to Generator
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ==================== VIEW 4: ABOUT & PROJECT SPECS ==================== -->
+    <section id="view-about" class="page-view space-y-8">
+      
+      <!-- Academic Project Hero Banner -->
+      <div class="glass-card p-6 sm:p-8 bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-950 text-white rounded-2xl relative overflow-hidden">
+        <div class="max-w-3xl space-y-3 relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-indigo-200 border border-white/15">
+            <i data-lucide="award" class="w-3.5 h-3.5"></i>
+            B.Tech Final Year / Semester Mini-Project
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">MailCraft AI – Smart Email Generator</h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            An intelligent, context-aware Natural Language Processing (NLP) web platform engineered to bridge the professional communication divide for engineering students, faculty, and corporate professionals.
+          </p>
+        </div>
+      </div>
+
+      <!-- Academic Specifications Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Spec 1: Problem Statement & Objectives -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-base">
+            <i data-lucide="target" class="w-5 h-5"></i>
+            <h3>Problem Statement & Objectives</h3>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Undergraduate students and entry-level engineering graduates frequently encounter hesitation, etiquette ambiguity, and language barriers when writing high-stakes emails—such as requesting assignment extensions, applying for competitive internships, or communicating with department heads.
+          </p>
+          <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
+            <li><strong>Automated Context Formulation:</strong> Synthesizes pertinent subject lines and body copy based on specific situational parameters.</li>
+            <li><strong>Multi-Tone Adaptation:</strong> Adjusts formality from formal academic etiquette to urgent project escalations.</li>
+            <li><strong>Trilingual Support:</strong> Provides fluent translation and Romanized Hinglish generation for Indian college environments.</li>
+            <li><strong>Zero-Dependency Fallback:</strong> Operates fully client-side or with lightweight Python backend integration without mandatory cloud dependencies.</li>
+          </ul>
+        </div>
+
+        <!-- Spec 2: Technical Architecture -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-base">
+            <i data-lucide="cpu" class="w-5 h-5"></i>
+            <h3>System Architecture & Tech Stack</h3>
+          </div>
+          <div class="space-y-3 text-xs text-slate-600 dark:text-slate-300">
+            <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 font-mono text-[11px] space-y-1">
+              <div><strong>Frontend:</strong> Semantic HTML5, Tailwind CSS, Vanilla ES6+ Modules</div>
+              <div><strong>Styling:</strong> Navy Blue (#0F172A) & Purple (#7C3AED) Design System</div>
+              <div><strong>Persistence:</strong> HTML5 Web Storage API (localStorage) + SQLite sync</div>
+              <div><strong>Backend:</strong> Python 3 <code>http.server</code> REST API + Gemini/OpenAI Proxy</div>
+            </div>
+            <p>
+              The architecture follows a dual-mode pattern: an intelligent local NLP heuristic generator works seamlessly offline, while an optional cloud LLM bridge (Gemini 1.5 / GPT-4o) provides enterprise-grade zero-shot completion without exposing keys to client viewers.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- B.Tech Viva & Technical Evaluation Q&A -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-lg border-b border-slate-100 dark:border-slate-800 pb-3">
+          <i data-lucide="help-circle" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+          <h3>Key Examination & Viva Defense Points</h3>
+        </div>
+
+        <div class="space-y-4 text-xs text-slate-600 dark:text-slate-300">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1.5">
+            <strong class="text-slate-900 dark:text-white text-sm">Q1: How does MailCraft AI prevent hardcoded, rigid templates?</strong>
+            <p>
+              Unlike legacy template engines that merely concatenate static strings, MailCraft AI's dynamic synthesis engine parses semantic components from user topics (action verbs, entities, urgency level, reasons). It uses dynamic grammatical openers, context-aware elaboration modules, situational bullet point synthesizers, and matching closings that vary dynamically on each generation seed.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1.5">
+            <strong class="text-slate-900 dark:text-white text-sm">Q2: How are API keys and user privacy secured?</strong>
+            <p>
+              MailCraft AI guarantees privacy by defaulting to on-device zero-network generation. When configured with cloud LLMs, API keys are held strictly in client browser memory or server environment variables, preventing exposure in public source repositories.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-1.5">
+            <strong class="text-slate-900 dark:text-white text-sm">Q3: How does the application support responsiveness and accessibility?</strong>
+            <p>
+              Built with responsive CSS Flexbox and CSS Grid layout primitives, standard ARIA labeling, high-contrast dark theme mode, keyboard accessibility, and dynamic word/character counter feedback.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div id="settings-modal" class="modal-backdrop" onclick="if(event.target === this) app.closeSettingsModal()">
+    <div class="modal-content p-6 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="settings" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">AI Engine & API Configuration</h3>
+        </div>
+        <button onclick="app.closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="font-semibold text-slate-700 dark:text-slate-300">AI Provider Mode</label>
+          <select id="settings-provider" onchange="app.handleProviderChange()" class="form-select text-xs">
+            <option value="auto">Smart Dynamic Engine (Recommended, Offline & Instant)</option>
+            <option value="backend">Local Python Server Backend (/api/generate)</option>
+            <option value="gemini">Google Gemini API (Direct)</option>
+            <option value="openai">OpenAI API (GPT-4o / GPT-4o-mini)</option>
+          </select>
+        </div>
+
+        <div id="settings-api-key-group" class="space-y-1.5 hidden">
+          <label class="font-semibold text-slate-700 dark:text-slate-300">API Key</label>
+          <input 
+            type="password" 
+            id="settings-api-key" 
+            placeholder="AIzaSy... or sk-..."
+            class="form-input text-xs font-mono"
+          />
+          <p class="text-[11px] text-slate-400">Stored strictly in your local browser storage. Never sent to any third-party server.</p>
+        </div>
+
+        <div id="settings-model-group" class="space-y-1.5 hidden">
+          <label class="font-semibold text-slate-700 dark:text-slate-300">Model Name (Optional)</label>
+          <input 
+            type="text" 
+            id="settings-model-name" 
+            placeholder="e.g. gemini-1.5-flash or gpt-4o-mini"
+            class="form-input text-xs font-mono"
+          />
+        </div>
+
+        <div class="p-3 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-800 dark:text-indigo-300 leading-relaxed">
+          <strong>Tip for College Project Evaluation:</strong> The default "Smart Dynamic Engine" runs 100% locally with zero configuration required. If presenting viva with external APIs, you can optionally provide your Gemini or OpenAI API key.
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button onclick="app.closeSettingsModal()" class="btn-secondary text-xs py-2 px-4 rounded-lg">
+          Cancel
+        </button>
+        <button onclick="app.saveSettings()" class="btn-primary text-xs py-2 px-4 rounded-lg">
+          Save Preferences
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== VIEW HISTORY ITEM MODAL ==================== -->
+  <div id="history-modal" class="modal-backdrop" onclick="if(event.target === this) app.closeHistoryModal()">
+    <div class="modal-content p-6 space-y-4 max-w-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="mail" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+          <h3 id="modal-history-title" class="text-base font-bold text-slate-900 dark:text-white">Email Details</h3>
+        </div>
+        <button onclick="app.closeHistoryModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Subject</label>
+          <div id="modal-history-subject" class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-sm mt-1"></div>
+        </div>
+
+        <div class="flex items-center gap-2 text-[11px] text-slate-500">
+          <span>Recipient: <strong id="modal-history-recipient" class="text-slate-700 dark:text-slate-300"></strong></span>
+          <span>&bull;</span>
+          <span>Type: <strong id="modal-history-type" class="text-slate-700 dark:text-slate-300"></strong></span>
+          <span>&bull;</span>
+          <span>Tone: <strong id="modal-history-tone" class="text-slate-700 dark:text-slate-300"></strong></span>
+          <span>&bull;</span>
+          <span id="modal-history-date"></span>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Email Body</label>
+          <div id="modal-history-body" class="p-3.5 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-sm leading-relaxed whitespace-pre-wrap mt-1 max-h-60 overflow-y-auto"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button onclick="app.deleteCurrentModalHistoryItem()" class="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Item
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="app.loadModalItemIntoGenerator()" class="btn-secondary text-xs py-2 px-3 rounded-lg flex items-center gap-1.5">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open in Generator
+          </button>
+          <button onclick="app.copyModalBody()" class="btn-primary text-xs py-2 px-4 rounded-lg flex items-center gap-1.5">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Body
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+  <div id="toast-container"></div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <p class="font-bold text-slate-800 dark:text-slate-200">MailCraft AI – Smart Email Generator</p>
+            <p>B.Tech Computer Science Engineering Capstone Project</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <button onclick="app.navigate('home')" class="hover:text-indigo-600 dark:hover:text-indigo-400">Home</button>
+          <button onclick="app.navigate('generator')" class="hover:text-indigo-600 dark:hover:text-indigo-400">Generator</button>
+          <button onclick="app.navigate('history')" class="hover:text-indigo-600 dark:hover:text-indigo-400">History</button>
+          <button onclick="app.navigate('about')" class="hover:text-indigo-600 dark:hover:text-indigo-400">About & Specs</button>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1">
+            <i data-lucide="github" class="w-3.5 h-3.5"></i> GitHub Ready
+          </a>
+        </div>
+      </div>
+      
+      <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/60 text-center text-[11px] text-slate-400">
+        &copy; 2026 MailCraft AI. Built for college students, educators, and working professionals. Developed with modern web standards.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Scripts -->
+  <script src="js/examples.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
